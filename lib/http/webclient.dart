@@ -5,9 +5,9 @@ import 'interceptors/logging_interceptor.dart';
 
 final Client client = HttpClientWithInterceptor.build(
   interceptors: [LoggingInterceptor()],
-  requestTimeout: Duration(seconds: 5),
+  requestTimeout: Duration(seconds: 15),
 );
 
-const String baseUrl = 'http://192.168.58.1:8080/transactions';
+const String baseUrl = 'https://sheltered-bayou-81092.herokuapp.com/transactions';
 
 

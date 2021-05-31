@@ -11,10 +11,7 @@ class NameContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (_) => NameCubit("Kako Botasso"),
-      child: NameView(),
-    );
+    return NameView();
   }
 }
 

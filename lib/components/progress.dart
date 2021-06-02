@@ -17,9 +17,31 @@ class Progress extends StatelessWidget {
           CircularProgressIndicator(),
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: Text(message, style: TextStyle(fontSize: 16.0),),
+            child: Text(
+              message,
+              style: TextStyle(fontSize: 16.0),
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ProgressView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sending'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Progress(
+            message: 'Sending...',
+          ),
+        ),
       ),
     );
   }

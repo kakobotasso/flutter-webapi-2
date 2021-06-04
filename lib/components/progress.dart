@@ -29,6 +29,8 @@ class Progress extends StatelessWidget {
 }
 
 class ProgressView extends StatelessWidget {
+  final String message;
+  ProgressView({this.message = 'Sending...'});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +41,7 @@ class ProgressView extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Progress(
-            message: 'Sending...',
+            message: message,
           ),
         ),
       ),

@@ -12,15 +12,20 @@ class DashboardContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => NameCubit("Kako Botasso"),
-      child: DashboardView(),
+      child: I18NLoadingContainer(
+        viewKey: 'flutter_i18n',
+        creator: (I18NMessages messages) => DashboardView(DashboardViewLazyI18N(messages)),
+      ),
     );
   }
 }
 
 class DashboardView extends StatelessWidget {
+  final DashboardViewLazyI18N _i18n;
+  DashboardView(this._i18n);
+
   @override
   Widget build(BuildContext context) {
-    var i18n = DashboardViewI18N(context);
     final name = context.watch<NameCubit>().state;
     return Scaffold(
       appBar: AppBar(
@@ -41,17 +46,17 @@ class DashboardView extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
                   _FeatureItem(
-                    i18n.transfer,
+                    _i18n.transfer,
                     Icons.monetization_on,
                     onClick: () => _showContactsList(context),
                   ),
                   _FeatureItem(
-                    i18n.transaction_feed,
+                    _i18n.transaction_feed,
                     Icons.description,
                     onClick: () => _showTransactionsList(context),
                   ),
                   _FeatureItem(
-                    i18n.change_name,
+                    _i18n.change_name,
                     Icons.person_outline,
                     onClick: () => _showChangeName(context),
                   ),
@@ -88,23 +93,15 @@ class DashboardView extends StatelessWidget {
   }
 }
 
-class DashboardViewI18N extends ViewI18N {
-  DashboardViewI18N(BuildContext context) : super(context);
+class DashboardViewLazyI18N {
+  final I18NMessages _messages;
+  DashboardViewLazyI18N(this._messages);
 
-  String get transfer => localize({
-        "pt-br": "Transferir",
-        "en": "Transfer",
-      });
+  String get transfer => _messages.get('transfer');
 
-  String get transaction_feed => localize({
-        "pt-br": "Transações",
-        "en": 'Transaction Feed',
-      });
+  String get transaction_feed => _messages.get('transaction_feed');
 
-  String get change_name => localize({
-        "pt-br": 'Mudar nome',
-        "en": 'Change name',
-      });
+  String get change_name => _messages.get('change_name');
 }
 
 class _FeatureItem extends StatelessWidget {

@@ -5,6 +5,7 @@ import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/http/webclients/i18n_webclient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:localstorage/localstorage.dart';
 
 import 'container.dart';
 
@@ -80,11 +81,26 @@ class FatalErrorI18NMessagesState extends I18NMessagesState {
 }
 
 class I18NMessagesCubit extends Cubit<I18NMessagesState> {
-  I18NMessagesCubit() : super(InitI18NMessagesState());
+  final LocalStorage storage = new LocalStorage('local_messages.json');
+  final String _viewKey;
+  I18NMessagesCubit(this._viewKey) : super(InitI18NMessagesState());
 
-  reload(I18NWebClient client) {
+  reload(I18NWebClient client) async {
     emit(LoadingI18NMessagesState());
-    client.findAll().then((messages) => emit(LoadedI18NMessagesState(I18NMessages(messages))));
+    await storage.ready;
+    final items = storage.getItem(_viewKey);
+    if(items != null) {
+      emit(LoadedI18NMessagesState(I18NMessages(items)));
+      return;
+    }
+    emit(LoadingI18NMessagesState());
+    client.findAll().then(saveAndRefresh);
+  }
+
+  saveAndRefresh(Map<String, dynamic> messages) {
+    storage.setItem(_viewKey, messages);
+    final state = LoadedI18NMessagesState(I18NMessages(messages));
+    emit(state);
   }
 }
 
@@ -103,7 +119,7 @@ class I18NLoadingContainer extends BlocContainer {
   Widget build(BuildContext context) {
     return BlocProvider<I18NMessagesCubit>(
         create: (BuildContext context) {
-          final cubit = I18NMessagesCubit();
+          final cubit = I18NMessagesCubit(this.viewKey);
           cubit.reload(I18NWebClient(this.viewKey));
           return cubit;
         },
